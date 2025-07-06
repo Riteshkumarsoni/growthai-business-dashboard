@@ -9,7 +9,7 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch('http://localhost:5000/business-data', {
+    const res = await fetch('https://growthai-business-dashboard-1.onrender.com/business-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, location }),
@@ -23,7 +23,7 @@ export default function App() {
     if (!name || !location) return;
     setLoading(true);
     const res = await fetch(
-      `http://localhost:5000/regenerate-headline?name=${name}&location=${location}`
+      `https://growthai-business-dashboard-1.onrender.com/regenerate-headline?name=${name}&location=${location}`
     );
     const result = await res.json();
     setData({ ...data, headline: result.headline });

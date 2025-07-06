@@ -4,6 +4,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: 'https://growthai-business-dashboard.vercel.app/', // allow your Vite frontend
+}));
+
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
