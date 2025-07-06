@@ -5,15 +5,24 @@ dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',    // Local development
-    'https://growthai-business-dashboard.vercel.app/'  // Vercel frontend
-  ],
-  credentials: true  // Allow credentials if you're using cookies or session-based auth
-};
+// ✅ Clean, strict, dynamic CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://growthai-business-dashboard.vercel.app'
+];
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow server-to-server or curl
+      if (allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS error: ${origin} not allowed`));
+    },
+    credentials: true
+  })
+);
 
 const PORT = process.env.PORT || 4000;
 
@@ -42,23 +51,22 @@ const headlines = [
   "{name} Sets a New Standard in {location}"
 ];
 
-
-app.get("/", (req,res) => {
-    res.send("Welcome in the growthpro ai")
-})
+app.get('/', (req, res) => {
+  res.send('Welcome to GrowthPro AI');
+});
 
 app.post('/business-data', (req, res) => {
   try {
     const { name, location } = req.body;
     const headline = headlines[0].replace('{name}', name).replace('{location}', location);
     res.json({
-        success: true,
-        rating: 4.3,
-        reviews: 127,
-        headline
+      success: true,
+      rating: 4.3,
+      reviews: 127,
+      headline
     });
   } catch (error) {
-    res.status(401).json({success: false, message:"Some Internal Error Occured"})
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
@@ -67,12 +75,10 @@ app.get('/regenerate-headline', (req, res) => {
     const { name, location } = req.query;
     const random = headlines[Math.floor(Math.random() * headlines.length)];
     const headline = random.replace('{name}', name).replace('{location}', location);
-    res.status(200).json({success: true, headline });
+    res.json({ success: true, headline });
   } catch (error) {
-    res.status(401).json({success: false, message:"Some Internal Error Occured"})
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
-
-
-app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Backend running on http://localhost:${PORT}`));
