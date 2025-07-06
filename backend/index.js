@@ -5,13 +5,18 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://growthai-business-dashboard.vercel.app/', // allow your Vite frontend
-}));
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',    // Local development
+    'https://growthai-business-dashboard.vercel.app/'  // Vercel frontend
+  ],
+  credentials: true  // Allow credentials if you're using cookies or session-based auth
+};
+
+app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
 app.use(express.json());
 
 const headlines = [
